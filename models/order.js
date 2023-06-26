@@ -42,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM,
         values: ["open", "booked", "done"],
       },
+      type: {
+        type: DataTypes.ENUM,
+        values: ["scheduled", "instant"],
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

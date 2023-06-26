@@ -4,12 +4,10 @@ const OrderController = require("../controller/OrderController");
 var router = express.Router();
 
 router.get("/", OrderController.index);
-// router
-//   .route("/:id")
-//   .get(UserController.showUser)
-//   .put(UserController.updateUser)
-//   .delete(UserController.deleteUser);
-// router.post("/register", UserController.register);
-// router.post("/login", UserController.login);
+router.route("/:id").get(OrderController.show).delete(OrderController.destroy);
+router.put("/pickup/:id", OrderController.pickUp);
+router.put("/done/:id", OrderController.finishOrder);
+router.post("/", OrderController.store);
+router.post("/filter", OrderController.filterOrderBydate);
 
 module.exports = router;

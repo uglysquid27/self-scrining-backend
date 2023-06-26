@@ -39,6 +39,10 @@ module.exports = {
         type: Sequelize.ENUM,
         values: ["open", "booked", "done"],
       },
+      type: {
+        type: Sequelize.ENUM,
+        values: ["scheduled", "instant"],
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
