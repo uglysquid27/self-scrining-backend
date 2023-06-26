@@ -38,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
       numberOfPassenger: {
         type: DataTypes.INTEGER,
       },
+      status: {
+        type: DataTypes.ENUM,
+        values: ["open", "booked", "done"],
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

@@ -20,7 +20,7 @@ module.exports = {
       if (validate.length) {
         return res.status(400).json(validate);
       }
-      const { name, email, password, confirmPassword } = req.body;
+      const { name, email, password, confirmPassword, role } = req.body;
       const checkEmail = await User.findOne({ where: { email } });
       if (checkEmail) {
         return res.status(400).json({ message: "Email already exists" });
@@ -34,6 +34,7 @@ module.exports = {
         name,
         email,
         password: passwordHashed,
+        role,
       });
       return res.status(201).json({ message: "User created" });
     } catch (error) {
