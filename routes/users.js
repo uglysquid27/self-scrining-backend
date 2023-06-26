@@ -8,6 +8,7 @@ router
   .get(UserController.showUser)
   .put(UserController.updateUser)
   .delete(UserController.deleteUser);
+router.put("/isActive/:id", UserController.updateStatus);
 router.post("/register", UserController.register);
 router.post("/login", UserController.login);
 

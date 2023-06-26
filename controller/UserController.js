@@ -145,4 +145,18 @@ module.exports = {
       console.log(error);
     }
   },
+  updateStatus: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { isActive } = req.body;
+      const user = await User.findOne({ where: { id } });
+      if (!user) {
+        return res.status(400).json({ message: "User not found" });
+      }
+      const updateUser = await User.update(req.body, { where: { id } });
+      res.status(200).json({ message: "User updated" });
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
