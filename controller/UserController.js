@@ -56,6 +56,9 @@ module.exports = {
       if (!user) {
         return res.status(400).json({ message: "Email not found" });
       }
+      if (!user.isActive) {
+        return res.status(400).json({ message: "User is not active" });
+      }
       const validPassword = await bcrypt.compare(password, user.password);
       if (!validPassword) {
         return res.status(400).json({ message: "Invalid password or email" });
