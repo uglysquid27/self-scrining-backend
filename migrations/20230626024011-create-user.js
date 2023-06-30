@@ -11,19 +11,19 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull: false,
       },
       email: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull: false,
       },
       gender: {
         type: Sequelize.ENUM,
-        values: ["M", "F"],
+        values: ["Male", "Female"],
       },
       telephone: {
         type: Sequelize.STRING,
-        
+        defaultValue:"-"
       },
       age: {
         type: Sequelize.INTEGER,
@@ -33,6 +33,7 @@ module.exports = {
       },
       role: {
         type: Sequelize.STRING,
+        defaultValue: "customer",
       },
       isActive: {
         type: Sequelize.BOOLEAN,

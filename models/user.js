@@ -20,10 +20,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       gender: {
         type: DataTypes.ENUM,
-        values: ["M", "F"],
+        values: ["Male", "Female"],
       },
       telephone: {
         type: DataTypes.STRING,
+        defaultValue: "-",
       },
       age: {
         type: DataTypes.INTEGER,
@@ -33,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       role: {
         type: DataTypes.STRING,
+        defaultValue: "customer",
       },
       isActive: {
         type: DataTypes.BOOLEAN,
