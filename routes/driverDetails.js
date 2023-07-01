@@ -20,7 +20,7 @@ router
   .get(DriverController.show)
   .put(upload.single("carPicture"), DriverController.update)
   .delete(DriverController.destroy);
+router.get("/byUserId/:userId", DriverController.showByUserId);
 router.post("/", upload.single("carPicture"), DriverController.store);
-
 
 module.exports = router;

@@ -6,8 +6,9 @@ var router = express.Router();
 router.get("/", OrderController.index);
 router.route("/:id").get(OrderController.show).delete(OrderController.destroy);
 router.put("/pickup/:id", OrderController.pickUp);
-router.put("/done/:id", OrderController.finishOrder);
+router.put("/status/:id", OrderController.finishOrder);
 router.post("/", OrderController.store);
 router.post("/filter", OrderController.filterOrderBydate);
+
 
 module.exports = router;

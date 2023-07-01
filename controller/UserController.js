@@ -52,12 +52,11 @@ module.exports = {
         return res.status(400).json(validate);
       }
       const { email, password } = req.body;
-      const user = await User.findOne({ where: { email } });
+      const user = await User.findOne({
+        where: { email, isActive: 1 },
+      });
       if (!user) {
         return res.status(400).json({ message: "Email not found" });
-      }
-      if (!user.isActive) {
-        return res.status(400).json({ message: "User is not active" });
       }
       const validPassword = await bcrypt.compare(password, user.password);
       if (!validPassword) {
@@ -69,6 +68,7 @@ module.exports = {
           name: user.name,
           email: user.email,
           role: user.role,
+          isActive: user.isActive,
         },
         process.env.SECRET_KEY
       );

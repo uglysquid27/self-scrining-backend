@@ -7,8 +7,85 @@ const v = new validator();
 module.exports = {
   index: async (req, res) => {
     try {
-      const orders = await Order.findAll();
-      res.status(200).json(orders);
+      const orderScheduled = await Order.findAll({
+        where: {
+          type: "scheduled",
+        },
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      const orderInstant = await Order.findAll({
+        where: {
+          type: "instant",
+        },
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      const order = await Order.findAll({
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      res.status(200).json({ orderScheduled, orderInstant, order });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Internal server error" });

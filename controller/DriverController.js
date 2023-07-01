@@ -4,6 +4,7 @@ const fs = require("fs");
 const moment = require("moment");
 const validator = require("fastest-validator");
 const v = new validator();
+const jwt = require("jsonwebtoken");
 
 module.exports = {
   index: async (req, res) => {
@@ -47,8 +48,8 @@ module.exports = {
       if (!user) {
         return res.status(400).json({ message: "User not found" });
       }
-      if (user.role !== "driver") {
-        return res.status(400).json({ message: "Sorry, you are not a driver" });
+      if (user.role == "driver") {
+        return res.status(400).json({ message: "You are already a driver" });
       }
       const driver = await DriverDetails.findOne({ where: { userId } });
 
@@ -62,7 +63,26 @@ module.exports = {
         req.body.carPicture = `/uploads/${uniqueName}`;
       }
       const newDriver = await DriverDetails.create(req.body);
-      res.status(200).json({ message: "Driver registered" });
+      const updateUser = await User.update(
+        { role: "driver" },
+        { where: { id: userId } }
+      );
+      // make new token for driver
+
+      const userFound = await User.findOne({
+        where: { id: userId },
+      });
+      const token = jwt.sign(
+        {
+          id: userFound.id,
+          name: userFound.name,
+          email: userFound.email,
+          role: userFound.role,
+          isActive: userFound.isActive,
+        },
+        process.env.SECRET_KEY
+      );
+      res.status(200).json({ message: "Driver registered", token });
     } catch (error) {
       console.log(error);
     }
@@ -140,4 +160,29 @@ module.exports = {
       console.log(error);
     }
   },
+  showByUserId: async (req, res) => { 
+    try {
+      const { userId } = req.params;
+      const driver = await DriverDetails.findOne({
+        where: { userId },
+        include: [
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+        attributes: {
+          exclude: ["createdAt", "updatedAt"],
+        },
+      });
+      if (!driver) {
+        return res.status(400).json({ message: "Driver not found" });
+      }
+      res.status(200).json(driver);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 };
