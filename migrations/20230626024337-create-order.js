@@ -37,7 +37,7 @@ module.exports = {
       },
       status: {
         type: Sequelize.ENUM,
-        values: ["open", "booked", "done"],
+        values: ["open", "picked", "done", "canceled"],
       },
       type: {
         type: Sequelize.ENUM,

@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       status: {
         type: DataTypes.ENUM,
-        values: ["open", "booked", "done"],
+        values: ["open", "picked", "done", "canceled"],
       },
       type: {
         type: DataTypes.ENUM,

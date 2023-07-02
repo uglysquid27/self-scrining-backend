@@ -203,7 +203,7 @@ module.exports = {
       }
 
       await order.update({
-        status: "booked",
+        status: "picked",
         driverId: driver.id,
       });
       res.status(200).json(order);
@@ -219,8 +219,8 @@ module.exports = {
       if (!order) {
         return res.status(400).json({ message: "Order not found" });
       }
-      if (order.status !== "booked") {
-        return res.status(400).json({ message: "Order is not booked" });
+      if (order.status !== "picked") {
+        return res.status(400).json({ message: "Order is not picked" });
       }
       await order.update({
         status: "done",
@@ -267,4 +267,193 @@ module.exports = {
       res.status(500).json({ message: "Internal server error" });
     }
   },
+  getOrderByUserId: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const order = await Order.findAll({
+        where: { userId: id },
+        order: [["createdAt", "DESC"]],
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      const scheduled = await Order.findAll({
+        where: {
+          userId: id,
+          type: "scheduled",
+          // status not equal open
+          status: {
+            [Op.ne]: "canceled",
+          },
+        },
+        order: [["createdAt", "DESC"]],
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      const instant = await Order.findAll({
+        where: {
+          userId: id,
+          type: "instant",
+          status: {
+            [Op.ne]: "canceled",
+          },
+        },
+        order: [["createdAt", "DESC"]],
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+
+      if (!order) {
+        return res.status(400).json({ message: "Order not found" });
+      }
+      res.status(200).json({ order, scheduled, instant });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  cancelingOrder: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const order = await Order.findByPk(id);
+      if (!order) {
+        return res.status(400).json({ message: "Order not found" });
+      }
+      if (order.status !== "open") {
+        return res.status(400).json({ message: "Order is not available" });
+      }
+      await order.update({
+        status: "canceled",
+      });
+      res.status(200).json(order);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  getOrderOpen: async (req, res) => { 
+    try {
+      const orderInstant = await Order.findAll({
+        where: {
+          status: "open",
+          type: "instant",
+        },
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      const orderScheduled = await Order.findAll({
+        where: {
+          status: "open",
+          type: "scheduled",
+        },
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      // if (!order) {
+      //   return res.status(400).json({ message: "Order not found" });
+      // }
+      res.status(200).json({ orderInstant, orderScheduled });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 };

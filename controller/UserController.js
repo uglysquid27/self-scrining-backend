@@ -118,19 +118,35 @@ module.exports = {
       if (!user) {
         return res.status(400).json({ message: "User not found" });
       }
-      const schema = {
-        name: { type: "string", optional: false, max: 100 },
-        email: { type: "email", optional: false, max: 100 },
-        telephone: { type: "string", optional: true, max: 100 },
-        gender: { type: "enum", values: ["M", "F"], optional: true },
-        age: { type: "number", optional: true, max: 100 },
-      };
-      const validate = v.validate(req.body, schema);
-      if (validate.length) {
-        return res.status(400).json(validate);
-      }
+      // const schema = {
+      //   name: { type: "string", optional: false, max: 100 },
+      //   email: { type: "email", optional: false, max: 100 },
+      //   telephone: { type: "string", optional: true, max: 100 },
+      //   gender: { type: "enum", values: ["M", "F"], optional: true },
+      //   age: { type: "number", optional: true, max: 100 },
+      // };
+      // const validate = v.validate(req.body, schema);
+      // if (validate.length) {
+      //   return res.status(400).json(validate);
+      // }
       const updateUser = await User.update(req.body, { where: { id } });
-      res.status(200).json({ message: "User updated" });
+
+      const updatedUser = await User.findOne({
+        where: { id },
+        attributes: { exclude: ["password"] },
+      });
+      // sign new jwt
+      const token = jwt.sign(
+        {
+          id: updatedUser.id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          role: updatedUser.role,
+          isActive: updatedUser.isActive,
+        },
+        process.env.SECRET_KEY
+      );
+      res.status(200).json({ message: "User updated", token });
     } catch (error) {
       console.log(error);
     }
