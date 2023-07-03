@@ -455,5 +455,132 @@ module.exports = {
     } catch (error) {
       console.log(error);
     }
+  },
+  getOrderByStatus: async (req, res) => { 
+    try {
+      const { driverId } = req.params;
+      const orderInstantPicked = await Order.findAll({
+        where: {
+          driverId,
+          status: "picked",
+          type: "instant",
+        },
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      const orderScheduledPicked = await Order.findAll({
+        where: {
+          driverId,
+          status: "picked",
+          type: "scheduled",
+        },
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      });
+      const orderInstantDone = await Order.findAll({
+        where: {
+          driverId,
+          status: "done",
+          type: "instant",
+        },
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      })
+      const orderScheduledDone = await Order.findAll({
+        where: {
+          driverId,
+          status: "done",
+          type: "scheduled",
+        },
+        include: [
+          {
+            model: DriverDetails,
+            attributes: {
+              exclude: ["createdAt", "updatedAt"],
+            },
+            include: [
+              {
+                model: User,
+                attributes: {
+                  exclude: ["password", "createdAt", "updatedAt"],
+                },
+              },
+            ],
+          },
+          {
+            model: User,
+            attributes: {
+              exclude: ["password", "createdAt", "updatedAt"],
+            },
+          },
+        ],
+      })
+      // if (!order) {
+      //   return res.status(400).json({ message: "Order not found" });
+      // }
+      res.status(200).json({ orderInstantPicked, orderScheduledPicked, orderInstantDone, orderScheduledDone });
+    } catch (error) {
+      console.log(error);
+    }
   }
 };

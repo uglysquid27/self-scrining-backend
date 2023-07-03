@@ -119,15 +119,25 @@ module.exports = {
       if (!driver) {
         return res.status(400).json({ message: "Driver not found" });
       }
-      const schema = {
-        carPlateNumber: { type: "string", optional: false, max: 100 },
-        drivingLicenseNumber: { type: "string", optional: false, max: 100 },
-        passengerTotal: { type: "string", optional: false },
-      };
-      const validate = v.validate(req.body, schema);
-      if (validate.length) {
-        return res.status(400).json(validate);
-      }
+      // const schema = {
+      //   carPlateNumber: { type: "string", optional: false, max: 100 },
+      //   drivingLicenseNumber: { type: "string", optional: false, max: 100 },
+      //   passengerTotal: { type: "string", optional: false },
+      // };
+      // const validate = v.validate(req.body, schema);
+      // if (validate.length) {
+      //   return res.status(400).json(validate);
+      // }
+      const {
+        carPlateNumber,
+        drivingLicenseNumber,
+        passengerTotal,
+        name,
+        email,
+        gender,
+        age,
+        telephone,
+      } = req.body;
       if (req.file) {
         const uniqueName =
           moment().format("YYYYMMDDHHmm") + "-" + req.file.originalname;
@@ -136,10 +146,37 @@ module.exports = {
           fs.unlinkSync(`public${driver.carPicture}`);
         }
       }
-      const updateDriver = await DriverDetails.update(req.body, {
-        where: { id },
+      // return res.json()
+      const updateDriver = await DriverDetails.update(
+        {
+          carPlateNumber,
+          drivingLicenseNumber,
+          passengerTotal,
+          carPicture: req.body.carPicture,
+        },
+        {
+          where: { id },
+        }
+      );
+      const updateUser = await User.update(
+        { name, email, gender, age, telephone },
+        { where: { id: driver.userId } }
+      );
+
+      const userFound = await User.findOne({
+        where: { id: driver.userId },
       });
-      res.status(200).json({ message: "Driver updated" });
+      const token = jwt.sign(
+        {
+          id: userFound.id,
+          name: userFound.name,
+          email: userFound.email,
+          role: userFound.role,
+          isActive: userFound.isActive,
+        },
+        process.env.SECRET_KEY
+      );
+      res.status(200).json({ message: "Driver updated", token });
     } catch (error) {
       console.log(error);
     }
@@ -160,7 +197,7 @@ module.exports = {
       console.log(error);
     }
   },
-  showByUserId: async (req, res) => { 
+  showByUserId: async (req, res) => {
     try {
       const { userId } = req.params;
       const driver = await DriverDetails.findOne({
@@ -184,5 +221,5 @@ module.exports = {
     } catch (error) {
       console.log(error);
     }
-  }
+  },
 };
