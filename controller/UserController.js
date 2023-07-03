@@ -1,10 +1,11 @@
-const { User } = require("../models");
+const { User, DriverDetails } = require("../models");
 const bcrypt = require("bcryptjs");
 const validator = require("fastest-validator");
 const v = new validator();
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const { Op } = require("sequelize");
+const fs = require("fs");
 dotenv.config();
 
 module.exports = {
@@ -157,6 +158,15 @@ module.exports = {
       const user = await User.findOne({ where: { id } });
       if (!user) {
         return res.status(400).json({ message: "User not found" });
+      }
+      const driverDetails = await DriverDetails.findOne({
+        where: { userId: id },
+      });
+      if (driverDetails) {
+        if (driverDetails.carPicture) {
+          fs.unlinkSync(`public${driverDetails.carPicture}`);
+        }
+        await DriverDetails.destroy({ where: { userId: id } });
       }
       await User.destroy({ where: { id } });
       return res.status(200).json({ message: "User deleted" });
