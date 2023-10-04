@@ -12,39 +12,50 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      userId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "Users",
-          key: "id",
-        },
-      },
-      driverId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "DriverDetails",
-          key: "id",
-        },
-      },
-      setOffLocation: {
+      namaLengkap: {
         type: DataTypes.STRING,
       },
-      setOffDate: {
+      alamat: {
         type: DataTypes.DATE,
       },
-      destinationLocation: {
+      phone: {
         type: DataTypes.STRING,
       },
-      numberOfPassenger: {
+      nik: {
         type: DataTypes.INTEGER,
       },
-      status: {
-        type: DataTypes.ENUM,
-        values: ["open", "picked", "done", "canceled"],
+      work: {
+        type: DataTypes.INTEGER,
       },
-      type: {
-        type: DataTypes.ENUM,
-        values: ["scheduled", "instant"],
+      born: {
+        type: DataTypes.INTEGER,
+      },
+      gender: {
+        type: DataTypes.INTEGER,
+      },
+      batuk: {
+        type: DataTypes.INTEGER,
+      },
+      bb: {
+        type: DataTypes.INTEGER,
+      },
+      demam: {
+        type: DataTypes.INTEGER,
+      },
+      lemas: {
+        type: DataTypes.INTEGER,
+      },
+      keringat: {
+        type: DataTypes.INTEGER,
+      },
+      sesak: {
+        type: DataTypes.INTEGER,
+      },
+      getah: {
+        type: DataTypes.INTEGER,
+      },
+      lainnya: {
+        type: DataTypes.INTEGER,
       },
       createdAt: {
         allowNull: false,
@@ -59,7 +70,7 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "Orders",
     }
   );
-  Order.belongsTo(User, { foreignKey: "userId" });
-  Order.belongsTo(DriverDetails, { foreignKey: "driverId" });
+  // Order.belongsTo(User, { foreignKey: "userId" });
+  // Order.belongsTo(DriverDetails, { foreignKey: "driverId" });
   return Order;
 };

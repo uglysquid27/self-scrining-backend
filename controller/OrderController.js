@@ -129,42 +129,59 @@ module.exports = {
   store: async (req, res) => {
     try {
       const {
-        userId,
-        destinationLocation,
-        setOffLocation,
-        status,
-        type,
-        numberOfPassenger,
-        setOffDate,
+        namaLengkap,
+        alamat,
+        phone,
+        nik,
+        work,
+        born,
+        gender,
+        batuk,
+        bb,
+        demam,
+        lemas,
+        keringat,
+        sesak,
+        getah,
+        lainnya
       } = req.body;
       const schema = {
-        userId: { type: "number", optional: false },
-        destinationLocation: { type: "string", optional: false, max: 100 },
-        status: { type: "string", optional: false },
-        type: { type: "string", optional: false },
-        numberOfPassenger: { type: "number", optional: false },
+        namaLengkap: { type: "string", optional: false },
+        alamat: { type: "string", optional: false },
+        phone: { type: "string", optional: false },
+        nik: { type: "string", optional: false },
+        work: { type: "string", optional: false },
+        born: { type: "string", optional: false },
+        gender: { type: "string", optional: false },
+        batuk: { type: "string", optional: false },
+        bb: { type: "string", optional: false },
+        demam: { type: "string", optional: false },
+        lemas: { type: "string", optional: false },
+        keringat: { type: "string", optional: false },
+        sesak: { type: "string", optional: false },
+        getah: { type: "string", optional: false },
+        lainnya: { type: "string", optional: false },
       };
       const validate = v.validate(req.body, schema);
       if (validate.length) {
         return res.status(400).json(validate);
       }
-      const user = await User.findOne({ where: { id: userId } });
-      if (!user) {
-        return res.status(400).json({ message: "User not found" });
-      }
-      if (user.role !== "customer") {
-        return res
-          .status(400)
-          .json({ message: "Sorry, you are not a customer" });
-      }
       const order = await Order.create({
-        userId,
-        destinationLocation,
-        setOffLocation,
-        status,
-        type,
-        numberOfPassenger,
-        setOffDate,
+        namaLengkap,
+        alamat,
+        phone,
+        nik,
+        work,
+        born,
+        gender,
+        batuk,
+        bb,
+        demam,
+        lemas,
+        keringat,
+        sesak,
+        getah,
+        lainnya
       });
       res.status(200).json(order);
     } catch (error) {
